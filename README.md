@@ -1,6 +1,8 @@
 # NVIDIA-Driver-AutoUpdate
 
-A PowerShell script that detects the NVIDIA GPU in a Windows device, finds the latest driver at NVIDIA and installs it unattended. Run it by hand, from a scheduled task or from any deployment tool. Example scripts for deploying it with Microsoft Intune are included.
+A PowerShell script for Windows admins that keeps NVIDIA GPU drivers current without user interaction. It detects the GPU, looks up the latest driver at NVIDIA, checks the NVIDIA Authenticode signature of the download and installs it silently. It never downgrades and returns `0`, `1` or `3010`, so it fits Microsoft Intune (Win32 app, detection and requirement scripts included), a scheduled task or any other deployment tool.
+
+Maintained by Dennis Biswane ([SoulBit](https://soulbit.nl)).
 
 Based on [jakelmg/NVIDIA-Driver-Downloader](https://github.com/jakelmg/NVIDIA-Driver-Downloader) (MIT), reworked for unattended use.
 
@@ -89,6 +91,17 @@ The numbers in the examples are placeholders. Use your own values.
 If the script reports `Found N unique NVIDIA lookup matches`, the error lists the candidates as `name [psid/pfid]`. Pick the one that matches your GPU and pass its two numbers as `-ProductSeriesId` and `-ProductId`.
 
 You can also look the IDs up manually on [nvidia.com/Download](https://www.nvidia.com/Download/index.aspx).
+
+## When to use this vs. alternatives
+
+Facts from each project's own page, read on 28 October 2026. Check the linked pages for the current state.
+
+| Tool | Notable features | Good fit when |
+| --- | --- | --- |
+| This script | GPU detection by PCI vendor ID, Authenticode check, no downgrade, exit codes `0`/`1`/`3010`, download resume, Intune detection and requirement scripts | Managed devices, run as SYSTEM from Intune or another deployment tool |
+| [lord-carlos/nvidia-update](https://github.com/lord-carlos/nvidia-update) | Checks for a newer driver and installs it, `-clean`, sample scheduled task command; needs 7-Zip or WinRAR | A single PC with a daily scheduled task |
+| [ZenitH-AT/nvidia-update](https://github.com/ZenitH-AT/nvidia-update) | `-Silent`, `-Schedule` (weekly task), `-LogFilePath`, `-Clean`, optional components such as PhysX via a config file | A personal PC where you want to choose components |
+| [Chocolatey `nvidia-display-driver`](https://community.chocolatey.org/packages/nvidia-display-driver) | Fixed driver version per package release, SHA-256 checksum, switches to skip components (`/NoAudio`, `/NoUSBC`) | Fleets already managed with Chocolatey |
 
 ## Intune example
 
