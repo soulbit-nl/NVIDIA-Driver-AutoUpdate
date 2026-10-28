@@ -21,4 +21,3 @@ PowerShell script that finds the NVIDIA GPU in a Windows device, looks up the la
 | `intune/` | Intune Win32 example: detection and requirement scripts, README |
 | `.github/scripts/check_nvidia_endpoints.py` | Weekly endpoint check (no AI) |
 | `.github/workflows/nvidia-endpoint-check.yml` | Runs the check, opens an issue on failure |
-| `.claude/skills/` | Workflows for Claude routines |
