@@ -92,6 +92,22 @@ If the script reports `Found N unique NVIDIA lookup matches`, the error lists th
 
 You can also look the IDs up manually on [nvidia.com/Download](https://www.nvidia.com/Download/index.aspx).
 
+## Troubleshooting
+
+Every run writes to the log (see [What the update script does](#what-the-update-script-does) for the location) and ends with `Finished with exit code N.` When the script stops, the cause is in the line before that. Common messages:
+
+| Message in the log | Cause and fix |
+| --- | --- |
+| `No NVIDIA GPU detected.` | No device with PCI vendor ID `10DE` was found. In Intune, use the requirement script so these devices show as Not applicable. |
+| `Multiple NVIDIA GPUs detected (...)` | More than one NVIDIA GPU is out of scope for automatic matching. Pass `-ProductSeriesId` and `-ProductId`. |
+| `Found 0 unique NVIDIA lookup matches` or `Found N unique NVIDIA lookup matches` | The Windows GPU name maps to no product or to several products. Pass `-ProductSeriesId` and `-ProductId`, see [Finding the product IDs](#finding-the-product-ids). |
+| `Administrator or SYSTEM rights are required to install.` | Run elevated, or as System in Intune. `-CheckOnly` works without admin rights. |
+| `Run this script in 64-bit PowerShell.` | The script was started in 32-bit PowerShell. In Intune, set "Run script as 32-bit process" to No. |
+| `Download did not complete within N minutes.` | Slow or interrupted link. The partial file is kept in `%ProgramData%\NVIDIA-DriverAutoUpdate\Cache` and resumed on the next run. Raise `-DownloadTimeoutMinutes` if needed. |
+| `Invalid signature on ...` or `Unexpected signer on ...` | The downloaded package is not validly signed by NVIDIA Corporation. The script does not run it, and on the next run a cached copy that fails the check is deleted and downloaded again. If it persists, check for a proxy or filter that alters downloads. |
+| `NVIDIA installation failed with exit code N.` | The NVIDIA installer itself failed. Extracted files are kept for inspection. Run with `-Clean`, or check whether another installation or a pending restart blocks it. |
+| `Version not yet active. Expected after restart: ...` | Not an error. The driver is installed and becomes active after a restart (exit code `3010`). |
+
 ## When to use this vs. alternatives
 
 Facts from each project's own page, read on 28 October 2026. Check the linked pages for the current state.
